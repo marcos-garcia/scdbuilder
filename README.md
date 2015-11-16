@@ -1,10 +1,10 @@
 # SCD Builder
 
-This is a Pentaho Data Integration step extension which builds a Type 2 Slowly Changing Dimension from a stream of source data in a snapshot form. The step calculates when an  item has changed and emits rows for every state of the item, with it's initial and final valid date.
+This is a [Pentaho Data Integration](http://community.pentaho.com/projects/data-integration/) step extension which builds a [Type 2 Slowly Changing Dimension](https://en.wikipedia.org/wiki/Slowly_changing_dimension#Type_2) from a stream of source data in a snapshot form. The step calculates when an  item has changed and emits rows for every state of the item, with it's initial and final valid date.
 
 In order to be able to do further operations with the previous or next status, it also emits both with a prefix indicated by the user.
 
-The step also gives you the chance to preload an initial SCD before the snapshot stream of data is read.
+The step also gives you the chance to preload an initial [SCD](https://en.wikipedia.org/wiki/Slowly_changing_dimension) before the snapshot stream of data is read.
 
 Another option allowed is to indicate that the stream of data incoming is already ordered, so that the step performance concerning memory usage is optimal and admits a larger amount of data before it overflows.
 
@@ -27,6 +27,7 @@ TODO: Write usage instructions
 ## Credits
 
 Author: [Marcos García Casado](www.marcosgarciacasado.com)
+
 Organization: [Bayes Forecast](www.bayesforecast.com)
 
 ## License
