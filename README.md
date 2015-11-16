@@ -26,9 +26,9 @@ TODO: Write usage instructions
 
 ## Credits
 
-Author: [Marcos García Casado](www.marcosgarciacasado.com)
+Author: [Marcos García Casado](http://www.marcosgarciacasado.com)
 
-Organization: [Bayes Forecast](www.bayesforecast.com)
+Organization: [Bayes Forecast](http://www.bayesforecast.com)
 
 ## License
 
