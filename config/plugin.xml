@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<plugin
+   id="VigMakePlugin"
+   iconfile="DPL.svg"
+   description="VigMake Plugin"
+   tooltip="This is the first attemp to build the VigMake Step plugin (dummy)"
+   category="ETL Utils"
+   classname="com.bayesforecast.ingdat.vigsteps.vigmake.VigMakeStepMeta">
+   <libraries>
+    <library name="vig-make.jar"/>
+    </libraries>
+    
+   <localized_category>
+     <category locale="en_US">ETL Utils</category>
+     <category locale="nl_NL">ETL Utils</category>
+     <category locale="fr_FR">ETL Utils</category>
+     <category locale="zh_CN">转换</category>
+   </localized_category>
+   <localized_description>
+     <description locale="en_US">VigMake plugin</description>
+   </localized_description>
+   <localized_tooltip>
+     <tooltip locale="en_US">This is the first attemp to build the VigMake Step plugin (dummy)</tooltip>
+   </localized_tooltip>
+   
+</plugin>

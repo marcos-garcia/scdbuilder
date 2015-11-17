@@ -101,6 +101,7 @@ public class VigMakeStepMeta extends BaseStepMeta implements StepMetaInterface {
 	private String nextSufix;
 	private String startFieldName;
 	private String endFieldName;
+	private String preloadedVig;
 	private boolean isOrderedData;
 	private List<String> idFields;
 	private List<String> attributeFields;
@@ -160,6 +161,7 @@ public class VigMakeStepMeta extends BaseStepMeta implements StepMetaInterface {
 		endFieldName = "date_end";
 		dateField = "";
 		stepName = "";
+		preloadedVig = "";
 		isOrderedData = true;
 		idFields = new ArrayList<String>();
 		attributeFields = new ArrayList<String>();
@@ -256,6 +258,14 @@ public class VigMakeStepMeta extends BaseStepMeta implements StepMetaInterface {
 		}
 	}
 
+	public String getPreloadedVig() {
+		return preloadedVig;
+	}
+
+	public void setPreloadedVig(String preloadedVig) {
+		this.preloadedVig = preloadedVig;
+	}
+
 	/**
 	 * This method is used when a step is duplicated in Spoon. It needs to return a deep copy of this
 	 * step meta object. Be sure to create proper deep copies if the step configuration is stored in
@@ -294,6 +304,8 @@ public class VigMakeStepMeta extends BaseStepMeta implements StepMetaInterface {
 		xmlFields.add(nextSufix_xml);
 		String orderedData_xml = XMLHandler.addTagValue("orderedData", isOrderedData);
 		xmlFields.add(orderedData_xml);
+		String preloadedVig_xml = XMLHandler.addTagValue("preloadedVig", preloadedVig);
+		xmlFields.add(preloadedVig_xml);
 		
 		String idFields_xml = XMLHandler.addTagValue("idFields", StringUtils.join(idFields, ","));
 		xmlFields.add(idFields_xml);
@@ -324,8 +336,8 @@ public class VigMakeStepMeta extends BaseStepMeta implements StepMetaInterface {
 			setEndFieldName(XMLHandler.getNodeValue(XMLHandler.getSubNode(stepnode, "endFieldName")));
 			setPreviousSufix(XMLHandler.getNodeValue(XMLHandler.getSubNode(stepnode, "previousSufix")));
 			setNextSufix(XMLHandler.getNodeValue(XMLHandler.getSubNode(stepnode, "nextSufix")));
-			logBasic("orderedData: "+XMLHandler.getNodeValue(XMLHandler.getSubNode(stepnode, "orderedData")));
 			setOrderedData(XMLHandler.getNodeValue(XMLHandler.getSubNode(stepnode, "orderedData")).startsWith("Y"));
+			setPreloadedVig(XMLHandler.getNodeValue(XMLHandler.getSubNode(stepnode, "preloadedVig")));
 			setIdFields(Arrays.asList(XMLHandler.getNodeValue(XMLHandler.getSubNode(stepnode, "idFields")).split(",")));
 			setAttributeFields(Arrays.asList(XMLHandler.getNodeValue(XMLHandler.getSubNode(stepnode, "attributeFields")).split(",")));
 			setStatusFields(Arrays.asList(XMLHandler.getNodeValue(XMLHandler.getSubNode(stepnode, "statusFields")).split(",")));
@@ -353,6 +365,7 @@ public class VigMakeStepMeta extends BaseStepMeta implements StepMetaInterface {
 			rep.saveStepAttribute(id_transformation, id_step, "previousSufix", previousSufix);
 			rep.saveStepAttribute(id_transformation, id_step, "nextSufix", nextSufix);
 			rep.saveStepAttribute(id_transformation, id_step, "orderedData", isOrderedData);
+			rep.saveStepAttribute(id_transformation, id_step, "preloadedVig", preloadedVig);
 
 			rep.saveStepAttribute(id_transformation, id_step, "idFields", StringUtils.join(idFields,","));
 			rep.saveStepAttribute(id_transformation, id_step, "attributeFields", StringUtils.join(attributeFields,","));
@@ -382,6 +395,7 @@ public class VigMakeStepMeta extends BaseStepMeta implements StepMetaInterface {
 			previousSufix = rep.getStepAttributeString(id_step, "previousSufix");
 			nextSufix = rep.getStepAttributeString(id_step, "nextSufix");
 			isOrderedData = rep.getStepAttributeBoolean(id_step, "orderedData");
+			preloadedVig = rep.getStepAttributeString(id_step, "preloadedVig");
 
 			idFields = Arrays.asList(rep.getStepAttributeString(id_step, "idFields").split(","));
 			attributeFields = Arrays.asList(rep.getStepAttributeString(id_step, "attributeFields").split(","));

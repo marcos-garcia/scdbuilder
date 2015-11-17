@@ -95,6 +95,8 @@ public class VigMakeStepDialog extends BaseStepDialog implements
 	private Text previousPrefix;
 	private Text nextPrefix;
 	private Button orderedData;
+	private Button preloadVig;
+	private Combo preloadVigCombo;
 
 	// table fields
 	private TableView idFields;
@@ -107,6 +109,8 @@ public class VigMakeStepDialog extends BaseStepDialog implements
 	private Label lPreviousSuf;
 	private Label lNextSuf;
 	private Label lOrderedData;
+	private Label lPreloadVig;
+	private Label lPreloadVigCombo;
 	private Label lDateField;
 	private Label lIdFields;
 	private Label lAttributesFields;
@@ -343,6 +347,48 @@ public class VigMakeStepDialog extends BaseStepDialog implements
 		fddateFieldName.top = new FormAttachment(endFieldName, margin);
 		dateFieldName.setLayoutData(fddateFieldName);
 
+
+		// preload vig value button
+		lPreloadVig = new Label(shell, SWT.RIGHT);
+		lPreloadVig.setText(BaseMessages.getString(PKG,
+				"VigMake.PreloadVig.Label"));
+		props.setLook(lPreloadVig);
+		FormData fdllPreloadVig = new FormData();
+		fdllPreloadVig.left = new FormAttachment(0, 0);
+		fdllPreloadVig.right = new FormAttachment(middle, -margin);
+		fdllPreloadVig.top = new FormAttachment(dateFieldName, margin);
+		lPreloadVig.setLayoutData(fdllPreloadVig);
+
+		preloadVig = new Button(shell, SWT.CHECK);
+		props.setLook(preloadVig);
+		FormData fdpreloadVig = new FormData();
+		fdpreloadVig.left = new FormAttachment(middle, 0);
+		fdpreloadVig.right = new FormAttachment(100, 0);
+		fdpreloadVig.top = new FormAttachment(dateFieldName, margin);
+		preloadVig.setLayoutData(fdpreloadVig);
+
+		// preload vig value combo
+		lPreloadVigCombo = new Label(shell, SWT.RIGHT);
+		lPreloadVigCombo.setText(BaseMessages.getString(PKG,
+				"VigMake.PreloadVigCombo.Label"));
+		props.setLook(lPreloadVigCombo);
+		FormData fdllPreloadVigCombo = new FormData();
+		fdllPreloadVigCombo.left = new FormAttachment(0, 0);
+		fdllPreloadVigCombo.right = new FormAttachment(middle, -margin);
+		fdllPreloadVigCombo.top = new FormAttachment(preloadVig, margin);
+		lPreloadVigCombo.setLayoutData(fdllPreloadVigCombo);
+
+		preloadVigCombo = new Combo(shell, SWT.SINGLE | SWT.LEFT | SWT.BORDER);
+		preloadVigCombo.setItems(transMeta.getPrevStepNames(stepMeta));
+		props.setLook(preloadVigCombo);
+		preloadVigCombo.addModifyListener(lsMod);
+		FormData fdpreloadVigCombo = new FormData();
+		fdpreloadVigCombo.left = new FormAttachment(middle, 0);
+		fdpreloadVigCombo.right = new FormAttachment(100, 0);
+		fdpreloadVigCombo.top = new FormAttachment(preloadVig, margin);
+		preloadVigCombo.setLayoutData(fdpreloadVigCombo);
+		
+		
 		// id fields
 		lIdFields = new Label(shell, SWT.RIGHT);
 		lIdFields.setText(BaseMessages.getString(PKG,
@@ -351,7 +397,7 @@ public class VigMakeStepDialog extends BaseStepDialog implements
 		FormData fdllIdFields = new FormData();
 		fdllIdFields.left = new FormAttachment(20, 0);
 		//fdllIdFields.right = new FormAttachment(middle, -margin);
-		fdllIdFields.top = new FormAttachment(dateFieldName, margin);
+		fdllIdFields.top = new FormAttachment(preloadVigCombo, margin);
 		lIdFields.setLayoutData(fdllIdFields);
 		
 		bObtenerIdFields = new Button( shell, SWT.PUSH );
@@ -392,7 +438,7 @@ public class VigMakeStepDialog extends BaseStepDialog implements
 		FormData fdllAttributesFields = new FormData();
 		fdllAttributesFields.left = new FormAttachment(idFields, margin);
 		//fdllAttributesFields.right = new FormAttachment(middle, -margin);
-		fdllAttributesFields.top = new FormAttachment(dateFieldName, margin);
+		fdllAttributesFields.top = new FormAttachment(preloadVigCombo, margin);
 		lAttributesFields.setLayoutData(fdllAttributesFields);
 		
 		bObtenerAttrFields = new Button( shell, SWT.PUSH );
@@ -424,7 +470,7 @@ public class VigMakeStepDialog extends BaseStepDialog implements
 		FormData fdllStatusFields = new FormData();
 		fdllStatusFields.left = new FormAttachment(attributesFields, margin);
 		//fdllStatusFields.right = new FormAttachment(middle, -margin);
-		fdllStatusFields.top = new FormAttachment(dateFieldName, margin);
+		fdllStatusFields.top = new FormAttachment(preloadVigCombo, margin);
 		lStatusFields.setLayoutData(fdllStatusFields);
 		
 		bObtenerStatFields = new Button( shell, SWT.PUSH );
@@ -503,6 +549,15 @@ public class VigMakeStepDialog extends BaseStepDialog implements
 		previousPrefix.addSelectionListener(lsDef);
 		nextPrefix.addSelectionListener(lsDef);
 
+
+		// preload vig button listener
+		SelectionAdapter lsPreloadVig = new SelectionAdapter() {
+		      public void widgetSelected( SelectionEvent arg0 ) {
+				preloadVigCombo.setEnabled(preloadVig.getSelection());
+			}
+		};
+		preloadVig.addSelectionListener(lsPreloadVig);
+
 		// Detect X or ALT-F4 or something that kills this window and cancel the
 		// dialog properly
 		shell.addShellListener(new ShellAdapter() {
@@ -547,6 +602,15 @@ public class VigMakeStepDialog extends BaseStepDialog implements
 		endFieldName.setText(meta.getEndFieldName());
 		dateFieldName.setText(meta.getDateField());
 		orderedData.setSelection(meta.isOrderedData());
+		if(meta.getPreloadedVig() == null || meta.getPreloadedVig().trim() == ""){
+			preloadVig.setSelection(false);
+			preloadVigCombo.setText("");
+			preloadVigCombo.setEnabled(false);
+		}else{
+			preloadVig.setSelection(true);
+			preloadVigCombo.setText(meta.getPreloadedVig());
+			preloadVigCombo.setEnabled(true);
+		}
 		for(String id : meta.getIdFields()){
 			idFields.add(id);
 		}
@@ -604,13 +668,13 @@ public class VigMakeStepDialog extends BaseStepDialog implements
 		// Setting to step name from the dialog control
 		stepname = wStepname.getText();
 		// Setting the settings to the meta object
-		logBasic("orderedData: "+orderedData.getSelection());
 		meta.setOrderedData(orderedData.getSelection());
 		meta.setPreviousSufix(previousPrefix.getText());
 		meta.setNextSufix(nextPrefix.getText());
 		meta.setStartFieldName(startFieldName.getText());
 		meta.setEndFieldName(endFieldName.getText());
 		meta.setDateField(dateFieldName.getText());
+		meta.setPreloadedVig(preloadVig.getSelection()?preloadVigCombo.getText():"");
 		meta.setIdFields(Arrays.asList(idFields.getItems(0)));
 		meta.setAttributeFields(Arrays.asList(attributesFields.getItems(0)));
 		meta.setStatusFields(Arrays.asList(statusFields.getItems(0)));
