@@ -16,22 +16,16 @@ import com.bayesforecast.ingdat.vigsteps.Item;
 import com.bayesforecast.ingdat.vigsteps.State;
 import com.bayesforecast.ingdat.vigsteps.StateConflictException;
 
-public class OrderedStateTreeAlgorithm implements StateTreeAlgorithm {
-
+public class GeneralFillStateTreeAlgorithm extends FillStateTreeAlgorithm {
+	
 	private Date actual;
 	private Date previousDate;
 	private Map<Item,Date> lastProcessedDates;
 	
-	public OrderedStateTreeAlgorithm(){
+	public GeneralFillStateTreeAlgorithm(){
 		lastProcessedDates = new HashMap<Item,Date>();
 	}
 	
-	public OrderedStateTreeAlgorithm(Map<Item, Date> lastProcessedDates, Date actual, Date previousDate) {
-		this.actual = actual;
-		this.previousDate = previousDate;
-		this.lastProcessedDates = lastProcessedDates;
-	}
-
 	@Override
 	public void addState(VigMakeStep vigMakeStep, Item item, Date date, State state) throws StateConflictException {
 		if(!date.equals(actual)){
@@ -107,5 +101,9 @@ public class OrderedStateTreeAlgorithm implements StateTreeAlgorithm {
 			item.getStates().put(nextDate, absenceState);
 		}
 	}	
+	
+	public StateTreeAlgorithm getNextTreeAlgorithm(){
+		return new GeneralStateTreeAlgorithm();
+	}
 
 }

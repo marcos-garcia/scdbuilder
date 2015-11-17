@@ -48,7 +48,19 @@ Once the plugin is installed, you will be able to use this step into your ETL pr
 
 ## Usage
 
-TODO: Write usage instructions
+TODO
+
+### Parameters
+
+TODO
+
+### Algorithms and performance
+
+TODO
+
+### Sharding and clustering
+
+TODO
 
 ## Contributing
 

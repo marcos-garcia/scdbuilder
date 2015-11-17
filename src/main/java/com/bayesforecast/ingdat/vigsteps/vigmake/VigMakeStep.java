@@ -79,6 +79,9 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 	/** The data. */
 	VigMakeStepData data;
 	
+	/** Flag indicating if the tree is preloading info. */
+	private boolean preloadingTree;
+	
 	/**
 	 * The constructor should simply pass on its arguments to the parent class.
 	 * 
@@ -121,13 +124,27 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 		// 2. Inicialización del listado de fechas procesadas
 		data.processedDates = new HashMap<Date,Boolean>();
 		// 3. Inicialización del controladordel arbol de estados,
-		//    dependiendo del campos isOrderedData
+		//    dependiendo del campos isOrderedData y de preloadedVig
 		if(meta.isOrderedData()){
-			logBasic("Algoritmo Ordenado");
-			data.stateInsertionAlgo = new OrderedStateTreeAlgorithm();
+			if(meta.getPreloadedVig() == ""){
+				preloadingTree = false;
+				data.fillStateInsertionAlgo = null;
+				data.stateInsertionAlgo = new OrderedStateTreeAlgorithm();
+			}else{
+				preloadingTree = true;
+				data.fillStateInsertionAlgo = new OrderedFillStateTreeAlgorithm();
+				data.stateInsertionAlgo = data.fillStateInsertionAlgo;
+			}
 		}else{
-			logBasic("Algoritmo No Ordenado");
-			data.stateInsertionAlgo = new GeneralStateTreeAlgorithm();
+			if(meta.getPreloadedVig() == ""){
+				preloadingTree = false;
+				data.fillStateInsertionAlgo = null;
+				data.stateInsertionAlgo = new GeneralStateTreeAlgorithm();
+			}else{
+				preloadingTree = true;
+				data.fillStateInsertionAlgo = new GeneralFillStateTreeAlgorithm();
+				data.stateInsertionAlgo = data.fillStateInsertionAlgo;
+			}
 		}
 		return super.init(meta, data);
 	}
@@ -158,6 +175,10 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 		
 		HashMap<List<Object>,Item> items = data.items;
 		HashMap<Date,Boolean> processedDates = data.processedDates;
+		if(preloadingTree){
+			preloadingTree = false;
+			data.stateInsertionAlgo = data.fillStateInsertionAlgo.getNextTreeAlgorithm();
+		}
 		StateTreeAlgorithm insertionAlgo = data.stateInsertionAlgo;
 
 		// TODO: En pruebas. Implementar correctamente cuando se hayan despejado el resto de bugs.

@@ -58,6 +58,7 @@ public class VigMakeStepData extends BaseStepData implements StepDataInterface {
 	public HashMap<List<Object>,Item> items; 
 	public HashMap<Date,Boolean> processedDates;
 	public StateTreeAlgorithm stateInsertionAlgo;
+	public FillStateTreeAlgorithm fillStateInsertionAlgo;
 	
     public VigMakeStepData()
 	{
