@@ -26,7 +26,8 @@ Once the jar is built in the *target* folder it's time to add the plugin to your
 
 Otherwise, if you're running maven within Eclipse, go to your settings.xml file in the .m2 folder and add this code to insert the pdi.install.dir variable:
 
-```<profiles>
+```
+<profiles>
   ...
     <profile>
 	  <id>inject-pdi-home</id>
@@ -40,7 +41,8 @@ Otherwise, if you're running maven within Eclipse, go to your settings.xml file 
   ...
     <activeProfile>inject-pdi-home</activeProfile>
   ...
-  </activeProfiles>```
+  </activeProfiles>
+```
 
 Once the plugin is installed, you will be able to use this step into your ETL processes the next time you open Spoon
 
