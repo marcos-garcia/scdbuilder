@@ -36,12 +36,12 @@ Otherwise, if you're running maven within Eclipse, go to your settings.xml file 
       </properties>
     </profile>
     ...
-  </profiles>
-  <activeProfiles>
+</profiles>
+<activeProfiles>
   ...
     <activeProfile>inject-pdi-home</activeProfile>
   ...
-  </activeProfiles>
+</activeProfiles>
 ```
 
 Once the plugin is installed, you will be able to use this step into your ETL processes the next time you open Spoon
