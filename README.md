@@ -10,7 +10,39 @@ Another option allowed is to indicate that the stream of data incoming is alread
 
 ## Installation
 
-TODO: Describe the installation process
+To add this plugin into your PDI installation, you have to download the source or checkout this repository first with this sentence (install [Git](https://git-scm.com/) before)
+
+`git clone https://github.com/marcos-garcia/scdbuilder.git`
+
+You must install [Apache Maven](https://maven.apache.org/) before continuing. Once you have Maven installed, open a command console and go to the *scdbuilder* folder, where *pom.xml* file resides. Run the next command to build binaries and package the jar.
+
+`maven package`
+
+If you have already built a previous version before, you should execute `maven clean` first.
+
+Once the jar is built in the *target* folder it's time to add the plugin to your PDI installation. To do so, you have to tell maven which is your PDI installation folder, writting it's path into a variable called pdi.install.dir when you call the install step. For instance, if your PDI path is *C://Pentaho/data-integration* then, the command you should execute is
+
+`mvn -Dpdi.install.dir=C://Pentaho/data-integration install`
+
+Otherwise, if you're running maven within Eclipse, go to your settings.xml file in the .m2 folder and add this code to insert the pdi.install.dir variable:
+
+`<profiles>
+  ...
+    <profile>
+	  <id>inject-pdi-home</id>
+      <properties>
+		<pdi.install.dir>C://Pentaho/data-integration</pdi.install.dir>
+      </properties>
+    </profile>
+    ...
+  </profiles>
+  <activeProfiles>
+  ...
+    <activeProfile>inject-pdi-home</activeProfile>
+  ...
+  </activeProfiles>`
+
+Once the plugin is installed, you will be able to use this step into your ETL processes the next time you open Spoon
 
 ## Usage
 
