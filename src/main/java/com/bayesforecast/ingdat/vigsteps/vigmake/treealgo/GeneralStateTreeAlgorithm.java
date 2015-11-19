@@ -1,4 +1,4 @@
-package com.bayesforecast.ingdat.vigsteps.vigmake;
+package com.bayesforecast.ingdat.vigsteps.vigmake.treealgo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import com.bayesforecast.ingdat.vigsteps.Item;
 import com.bayesforecast.ingdat.vigsteps.State;
 import com.bayesforecast.ingdat.vigsteps.StateConflictException;
+import com.bayesforecast.ingdat.vigsteps.vigmake.VigMakeStep;
 
 public class GeneralStateTreeAlgorithm implements StateTreeAlgorithm {
 

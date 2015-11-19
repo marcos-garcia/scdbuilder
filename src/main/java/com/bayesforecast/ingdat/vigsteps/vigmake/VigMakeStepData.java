@@ -31,6 +31,8 @@ import org.pentaho.di.trans.step.BaseStepData;
 import org.pentaho.di.trans.step.StepDataInterface;
 
 import com.bayesforecast.ingdat.vigsteps.Item;
+import com.bayesforecast.ingdat.vigsteps.vigmake.treealgo.FillStateTreeAlgorithm;
+import com.bayesforecast.ingdat.vigsteps.vigmake.treealgo.StateTreeAlgorithm;
 
 /**
  * This class is part of the demo step plug-in implementation.

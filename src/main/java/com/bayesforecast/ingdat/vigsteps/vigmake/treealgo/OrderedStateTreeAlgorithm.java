@@ -1,4 +1,4 @@
-package com.bayesforecast.ingdat.vigsteps.vigmake;
+package com.bayesforecast.ingdat.vigsteps.vigmake.treealgo;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,17 +15,25 @@ import org.apache.commons.lang.time.DateUtils;
 import com.bayesforecast.ingdat.vigsteps.Item;
 import com.bayesforecast.ingdat.vigsteps.State;
 import com.bayesforecast.ingdat.vigsteps.StateConflictException;
+import com.bayesforecast.ingdat.vigsteps.vigmake.VigMakeStep;
+import com.bayesforecast.ingdat.vigsteps.vigmake.VigMakeStepData;
 
-public class GeneralFillStateTreeAlgorithm extends FillStateTreeAlgorithm {
-	
+public class OrderedStateTreeAlgorithm implements StateTreeAlgorithm {
+
 	private Date actual;
 	private Date previousDate;
 	private Map<Item,Date> lastProcessedDates;
 	
-	public GeneralFillStateTreeAlgorithm(){
+	public OrderedStateTreeAlgorithm(){
 		lastProcessedDates = new HashMap<Item,Date>();
 	}
 	
+	public OrderedStateTreeAlgorithm(Map<Item, Date> lastProcessedDates, Date actual, Date previousDate) {
+		this.actual = actual;
+		this.previousDate = previousDate;
+		this.lastProcessedDates = lastProcessedDates;
+	}
+
 	@Override
 	public void addState(VigMakeStep vigMakeStep, Item item, Date date, State state) throws StateConflictException {
 		if(!date.equals(actual)){
@@ -101,9 +109,5 @@ public class GeneralFillStateTreeAlgorithm extends FillStateTreeAlgorithm {
 			item.getStates().put(nextDate, absenceState);
 		}
 	}	
-	
-	public StateTreeAlgorithm getNextTreeAlgorithm(){
-		return new GeneralStateTreeAlgorithm();
-	}
 
 }
