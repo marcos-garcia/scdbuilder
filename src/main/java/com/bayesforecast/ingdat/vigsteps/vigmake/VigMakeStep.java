@@ -84,12 +84,6 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 	/** The data. */
 	VigMakeStepData data;
 	
-	/** Flag indicating if the tree is preloading info. */
-	private boolean preloadingTree;
-	
-	/** Preloading input RowSet*/
-	private RowSet preloadingInputRowset;
-	
 	/**
 	 * The constructor should simply pass on its arguments to the parent class.
 	 * 
@@ -135,17 +129,17 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 		//    dependiendo del campos isOrderedData y de preloadedVig
 		if(meta.isOrderedData()){
 			if(meta.getPreloadedVig() == ""){
-				preloadingTree = false;
-				preloadingInputRowset = null;
+				data.preloadingTree = false;
+				data.preloadingInputRowset = null;
 				data.fillStateInsertionAlgo = null;
 				data.stateInsertionAlgo = new OrderedStateTreeAlgorithm();
 			}else{
-				preloadingTree = true;
+				data.preloadingTree = true;
 				for(RowSet r : this.getInputRowSets()){
-					logBasic(r.getOriginStepName() +" vs "+ meta.getPreloadedVig());
+					logDebug(r.getOriginStepName() +" vs "+ meta.getPreloadedVig());
 					if(r.getOriginStepName().equals(meta.getPreloadedVig())){
-						logBasic("Ordenado: "+r.getOriginStepName());
-						preloadingInputRowset = r;
+						logDebug("Ordenado: "+r.getOriginStepName());
+						data.preloadingInputRowset = r;
 					}
 				}
 				data.fillStateInsertionAlgo = new OrderedFillStateTreeAlgorithm();
@@ -153,17 +147,17 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 			}
 		}else{
 			if(meta.getPreloadedVig() == ""){
-				preloadingTree = false;
-				preloadingInputRowset = null;
+				data.preloadingTree = false;
+				data.preloadingInputRowset = null;
 				data.fillStateInsertionAlgo = null;
 				data.stateInsertionAlgo = new GeneralStateTreeAlgorithm();
 			}else{
-				preloadingTree = true;
+				data.preloadingTree = true;
 				for(RowSet r : this.getInputRowSets()){
-					logBasic(r.getOriginStepName() +" vs "+ meta.getPreloadedVig());
+					logDebug(r.getOriginStepName() +" vs "+ meta.getPreloadedVig());
 					if(r.getOriginStepName().equals(meta.getPreloadedVig())){
-						logBasic("No Ordenado: "+r.getOriginStepName());
-						preloadingInputRowset = r;
+						logDebug("No Ordenado: "+r.getOriginStepName());
+						data.preloadingInputRowset = r;
 					}
 				}
 				data.fillStateInsertionAlgo = new GeneralFillStateTreeAlgorithm();
@@ -195,8 +189,41 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 	 * @throws KettleException the kettle exception
 	 */
 	public boolean processRow(StepMetaInterface smi, StepDataInterface sdi) throws KettleException {
-			
-		Object[] r = getRow(); 
+		
+		Object[] r = null;
+
+		
+		if(data.preloadingTree && !(data.preloadingInputRowset.isDone() && data.preloadingInputRowset.size() == 0)){
+			r = getRowFrom(data.preloadingInputRowset);
+		}else{
+			if(data.preloadingTree){
+				data.preloadingTree = false;
+				logBasic("Preloading rowset size: "+data.preloadingInputRowset.size());
+				logBasic("Cambiando algo from: "+data.stateInsertionAlgo.getClass().getCanonicalName());
+				data.stateInsertionAlgo = data.fillStateInsertionAlgo.getNextTreeAlgorithm();
+				logBasic("Cambiando algo to: "+data.stateInsertionAlgo.getClass().getCanonicalName());
+				data.processedDates.clear();
+			}
+		}
+		
+		if(r == null){
+			r = getRow();
+		}
+
+
+		
+		/*HashMap<List<Object>,Item> items = data.items;
+		HashMap<Date,Boolean> processedDates = data.processedDates;
+		if(data.preloadingTree && data.preloadingInputRowset.isDone() && data.preloadingInputRowset.size() == 0){
+			data.preloadingTree = false;
+			logDebug("Preloading rowset size: "+data.preloadingInputRowset.size());
+			logDebug("Cambiando algo from: "+data.stateInsertionAlgo.getClass().getCanonicalName());
+			data.stateInsertionAlgo = data.fillStateInsertionAlgo.getNextTreeAlgorithm();
+			logDebug("Cambiando algo to: "+data.stateInsertionAlgo.getClass().getCanonicalName());
+			processedDates.clear();
+		}*/
+		
+		StateTreeAlgorithm insertionAlgo = data.stateInsertionAlgo;
 		
 		// if no more rows are expected, indicate step is finished and processRow() should not be called again
 		if (r == null){
@@ -205,33 +232,23 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 			return false;
 		}
 		
-		HashMap<List<Object>,Item> items = data.items;
-		HashMap<Date,Boolean> processedDates = data.processedDates;
-		if(preloadingTree && preloadingInputRowset.isDone()){
-			preloadingTree = false;
-			logBasic("Cambiando algo from: "+data.stateInsertionAlgo.getClass().getCanonicalName());
-			//data.stateInsertionAlgo = data.fillStateInsertionAlgo.getNextTreeAlgorithm();
-			logBasic("Cambiando algo to: "+data.stateInsertionAlgo.getClass().getCanonicalName());
-			processedDates.clear();
-		}
-		StateTreeAlgorithm insertionAlgo = data.stateInsertionAlgo;
-
-		// TODO: En pruebas. Implementar correctamente cuando se hayan despejado el resto de bugs.
-		/*if(first && meta.getPreloadedVig() != ""){
-				preloadTree();
-		}*/
-
-		// clone the input row structure and place it in our data object
-		data.outputRowMeta = (RowMetaInterface) getInputRowMeta().clone();
-		// use meta.getFields() to change it, so it reflects the output row structure 
-		meta.getFields(data.outputRowMeta, getStepname(), null, null, this, null, null);
+		if(first){
+			if(data.preloadingTree && data.preloadingInputRowset.getRowMeta() != null){
+				data.inputRowMeta = data.preloadingInputRowset.getRowMeta().clone();
+			}else{
+				data.inputRowMeta = getInputRowMeta().clone();
+			}
+			data.outputRowMeta = data.inputRowMeta.clone();
+			// use meta.getFields() to change it, so it reflects the output row structure 
+			meta.getFields(data.outputRowMeta, getStepname(), null, null, this, null, null);
+		}		
 		
 		
-		Item item = getItemFromRow(r);
-		Date date = getDateFromRow(r);
-		State state = getStateFromRow(r);
+		Item item = getItemFromRow(r,data.inputRowMeta);
+		Date date = getDateFromRow(r,data.inputRowMeta);
+		State state = getStateFromRow(r,data.inputRowMeta);
 		
-		processedDates.put(date, true);
+		data.processedDates.put(date, true);
 		
 		try {
 			// Llamada al algoritmo para computar la fila
@@ -250,11 +267,11 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 	 * @param r the r
 	 * @return the state from row
 	 */
-	private State getStateFromRow(Object[] r) {
+	private State getStateFromRow(Object[] r, RowMetaInterface rmi) {
 		List<String> statusFields = meta.getStatusFields();
 		List<Object> status = new ArrayList<Object>();
 		for(String statusField : statusFields){
-			status.add(r[getInputRowMeta().indexOfValue(statusField)]);
+			status.add(r[rmi.indexOfValue(statusField)]);
 		}
 		State state = new State(status);
 		return state;
@@ -267,10 +284,10 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 	 * @return the date from row
 	 * @throws KettleValueException the kettle value exception
 	 */
-	private Date getDateFromRow(Object[] r) throws KettleValueException {
+	private Date getDateFromRow(Object[] r, RowMetaInterface rmi) throws KettleValueException {
 		String dateField = meta.getDateField();
-		int dateIndex = getInputRowMeta().indexOfValue(dateField);
-		Date date = getInputRowMeta().getDate(r, dateIndex);
+		int dateIndex = rmi.indexOfValue(dateField);
+		Date date = rmi.getDate(r, dateIndex);
 		return date;
 	}
 
@@ -280,7 +297,7 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 	 * @param r the r
 	 * @return the item from row
 	 */
-	private Item getItemFromRow(Object[] r) {
+	private Item getItemFromRow(Object[] r, RowMetaInterface rmi) {
 		HashMap<List<Object>,Item> items = data.items;
 		
 		List<String> attributeFields = meta.getAttributeFields();
@@ -288,12 +305,14 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 		
 		List<Object> ids = new ArrayList<Object>();
 		List<Object> attributes = new ArrayList<Object>();
-		
+
+		logDebug("RowMeta: "+rmi);
 		for(String idField : idFields){
-			ids.add(r[getInputRowMeta().indexOfValue(idField)]);
+			logDebug(idField);
+			ids.add(r[rmi.indexOfValue(idField)]);
 		}
 		for(String attributeField : attributeFields){
-			attributes.add(r[getInputRowMeta().indexOfValue(attributeField)]);
+			attributes.add(r[rmi.indexOfValue(attributeField)]);
 		}
 		Item item; 
 		
@@ -336,9 +355,9 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 		Set<Date> processedDates = data.processedDates.keySet();
 		HashMap<List<Object>,Item> items = data.items;
 
-		logBasic("Fechas procesadas: "+processedDates.size());
-		logBasic("Items procesados: "+items.size());
-		logBasic("Algoritmo: "+data.stateInsertionAlgo.getClass().getSimpleName());
+		logDebug("Fechas procesadas: "+processedDates.size());
+		logDebug("Items procesados: "+items.size());
+		logDebug("Algoritmo: "+data.stateInsertionAlgo.getClass().getSimpleName());
 		
 		// Para cada item, marca estados ausentes y limpia los estados. Después emite el item
 		for(Item item : items.values()){
@@ -420,12 +439,6 @@ public class VigMakeStep extends BaseStep implements StepInterface {
 					if(!status.getValue().getNext().isNullState()){
 						// 2.3.1 Si no es un estado nulo, se marca como fecha fin su anterior
 						statusNext = status.getValue().getNext().getStatus().toArray();
-					}
-					if(item.getStates().higherKey(status.getKey()) == null){
-						logBasic("item: "+item.toString());
-						logBasic("status.getKey(): "+status.getKey());
-						logBasic("states: "+item.getStates());
-						logBasic("next: "+ ArrayUtils.toString(statusNext));
 					}
 					dateEnd = DateUtils.addDays(item.getStates().higherKey(status.getKey()), -1);
 				}

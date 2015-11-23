@@ -26,6 +26,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.pentaho.di.core.RowSet;
 import org.pentaho.di.core.row.RowMetaInterface;
 import org.pentaho.di.trans.step.BaseStepData;
 import org.pentaho.di.trans.step.StepDataInterface;
@@ -56,11 +57,20 @@ import com.bayesforecast.ingdat.vigsteps.vigmake.treealgo.StateTreeAlgorithm;
  */
 public class VigMakeStepData extends BaseStepData implements StepDataInterface {
 
+	public RowMetaInterface inputRowMeta;
 	public RowMetaInterface outputRowMeta;
 	public HashMap<List<Object>,Item> items; 
 	public HashMap<Date,Boolean> processedDates;
 	public StateTreeAlgorithm stateInsertionAlgo;
 	public FillStateTreeAlgorithm fillStateInsertionAlgo;
+	
+
+	/** Flag indicating if the tree is preloading info. */
+	public boolean preloadingTree;
+	
+	/** Preloading input RowSet*/
+	public RowSet preloadingInputRowset;
+	
 	
     public VigMakeStepData()
 	{

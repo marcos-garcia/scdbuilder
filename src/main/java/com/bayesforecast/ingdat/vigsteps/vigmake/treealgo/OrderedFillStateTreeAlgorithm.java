@@ -36,7 +36,7 @@ public class OrderedFillStateTreeAlgorithm extends FillStateTreeAlgorithm {
 		}
 		
 		if(item.getId().get(0).toString().compareTo("1971367") == 0){
-			vigMakeStep.logBasic(item.toString());
+			vigMakeStep.logDebug(item.toString());
 			Set<Entry<Date, State>> set = item.getStates().entrySet();
 			
 			// 2. Recorre los estados de cada item

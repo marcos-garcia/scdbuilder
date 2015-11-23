@@ -96,7 +96,7 @@ public class OrderedStateTreeAlgorithm implements StateTreeAlgorithm {
 	
 	public void cleanStates(Item item){
 	}
-	
+
 	public void markAbsences(Item item, Set<Date> dates){
 		SortedSet<Date> sortedDates = new TreeSet<Date>(dates);
 		Date lastDate = sortedDates.last();
@@ -108,6 +108,6 @@ public class OrderedStateTreeAlgorithm implements StateTreeAlgorithm {
 			absenceState.setNext(item.getStates().lastEntry().getValue());
 			item.getStates().put(nextDate, absenceState);
 		}
-	}	
+	}
 
 }
