@@ -5,7 +5,7 @@
 	<name>SCD Builder</name>
 
 	<properties>
-		<plugin.output.dir>${pdi.install.dir}/plugins/steps/VigMake</plugin.output.dir>
+		<plugin.output.dir>${pdi.install.dir}/plugins/steps/SCDBuild</plugin.output.dir>
 	</properties>
 
 	<repositories>
@@ -61,9 +61,6 @@
 					<include>**/*.svg</include>
 					<include>**/*.png</include>
 				</includes>
-			</resource>
-			<resource>
-				<directory>../vig-core/src/main/java</directory>
 			</resource>
 		</resources>
 		<plugins>
