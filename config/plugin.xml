@@ -1,26 +1,27 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <plugin
-   id="VigMakePlugin"
-   iconfile="DPL.svg"
-   description="VigMake Plugin"
-   tooltip="This is the first attemp to build the VigMake Step plugin (dummy)"
-   category="ETL Utils"
-   classname="com.bayesforecast.ingdat.vigsteps.vigmake.VigMakeStepMeta">
+   id="SCDBuildStep"
+   iconfile="scdbuilder.svg"
+   description="SCD build"
+   tooltip="Builds a fast in-memory Type 2 Slowly Changing Dimension"
+   category="i18n:org.pentaho.di.trans.step:BaseStep.Category.DataWarehouse"
+   classname="com.bayesforecast.ingdat.scdsteps.scdbuilder.SCDBuildStepMeta">
    <libraries>
-    <library name="vig-make.jar"/>
+    <library name="scdbuilder.jar"/>
     </libraries>
     
    <localized_category>
-     <category locale="en_US">ETL Utils</category>
-     <category locale="nl_NL">ETL Utils</category>
-     <category locale="fr_FR">ETL Utils</category>
-     <category locale="zh_CN">转换</category>
+     <category locale="en_US">Data Warehouse</category>
+     <category locale="nl_NL">Data Warehouse</category>
+     <category locale="fr_FR">Data Warehouse</category>
+     <category locale="es_ES">Data Warehouse</category>
    </localized_category>
    <localized_description>
-     <description locale="en_US">VigMake plugin</description>
+     <description locale="en_US">SCD build</description>
+     <description locale="es_ES">Construir SCD</description>
    </localized_description>
    <localized_tooltip>
-     <tooltip locale="en_US">This is the first attemp to build the VigMake Step plugin (dummy)</tooltip>
+     <tooltip locale="en_US">Builds a fast in-memory Type 2 Slowly Changing Dimension</tooltip>
    </localized_tooltip>
    
 </plugin>
